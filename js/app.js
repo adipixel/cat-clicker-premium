@@ -61,6 +61,11 @@ var octopus = {
         model.currentCat = cat;
     },
 
+    setCat: function(cat) {
+        model.currentCat.name = cat.name;
+        model.currentCat.imgSrc = cat.imgSrc;
+        model.currentCat.clickCount = cat.clickCount;
+    },
     incrementCounter: function() {
         model.currentCat.clickCount++;
         catView.render();
@@ -77,10 +82,51 @@ var catView = {
         this.catNameElem = document.getElementById('cat-name');
         this.catImageElem = document.getElementById('cat-img');
         this.countElem = document.getElementById('cat-count');
+        this.adminBtn = document.getElementById('admin-btn');
+        this.cancel = document.getElementById('cancel');
+        this.submit = document.getElementById('submit');
+        this.catNameElemE = document.getElementById('cat-name-e');
+        this.catImageElemE = document.getElementById('cat-img-e');
+        this.countElemE = document.getElementById('cat-count-e');
+        this.adminPanel = document.getElementById('admin-panel');
+        this.adminPanel.style.display = 'none';
 
         this.catImageElem.addEventListener('click', function(){
             octopus.incrementCounter();
         });
+
+        var tempAP = this.adminPanel;
+        this.adminBtn.addEventListener('click', (function(tempAP){
+            return function(){
+                tempAP.style.display = 'block';
+            }
+        })(tempAP));
+
+        this.cancel.addEventListener('click', (function(tempAP){
+            return function(){
+                tempAP.style.display = 'none';
+            }
+        })(tempAP));
+
+        var catNameElemE = this.catNameElemE;
+        var countElemE = this.countElemE;
+        var catImageElemE = this.catImageElemE;
+        this.submit.addEventListener('click', (function(catNameElemE, countElemE, catImageElemE){
+            return function()
+            {
+                var cat = {
+                    name: catNameElemE.value,
+                    clickCount : countElemE.value,
+                    imgSrc : catImageElemE.value,
+                    imgAttribution : 'https://www.flickr.com/'
+                }
+                octopus.setCat(cat);
+                catView.render();
+            }
+        })(catNameElemE, countElemE, catImageElemE));
+
+
+        
 
         this.render();
     },
@@ -90,6 +136,10 @@ var catView = {
         this.countElem.textContent = currentCat.clickCount;
         this.catNameElem.textContent = currentCat.name;
         this.catImageElem.src = currentCat.imgSrc;
+
+        this.countElemE.value = currentCat.clickCount;
+        this.catNameElemE.value = currentCat.name;
+        this.catImageElemE.value = currentCat.imgSrc;
     }
 };
 
